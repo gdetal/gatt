@@ -1,21 +1,46 @@
 package gioctl
 
-import "syscall"
+import (
+	"log"
+	"runtime"
+	"syscall"
+)
 
-const (
-	typeBits      = 8
-	numberBits    = 8
-	sizeBits      = 14
-	directionBits = 2
+func ioctlBits() (int, int, int, int) {
+	switch runtime.GOARCH {
+	case "mips":
+		return 8, 8, 13, 3
+	case "amd64":
+		return 8, 8, 14, 2
+	}
+
+	log.Fatalf("unsupported architecture: %v", runtime.GOARCH)
+
+	return 0, 0, 0, 0
+}
+
+func ioctlDirections() (uintptr, uintptr, uintptr) {
+	switch runtime.GOARCH {
+	case "mips":
+		return 1, 4, 2
+	case "amd64":
+		return 0, 1, 2
+	}
+
+	log.Fatalf("unsupported architecture: %v", runtime.GOARCH)
+
+	return 0, 0, 0
+}
+
+var (
+	typeBits, numberBits, sizeBits, directionBits = ioctlBits()
 
 	typeMask      = (1 << typeBits) - 1
 	numberMask    = (1 << numberBits) - 1
 	sizeMask      = (1 << sizeBits) - 1
 	directionMask = (1 << directionBits) - 1
 
-	directionNone  = 0
-	directionWrite = 1
-	directionRead  = 2
+	directionNone, directionWrite, directionRead = ioctlDirections()
 
 	numberShift    = 0
 	typeShift      = numberShift + numberBits
