@@ -10,7 +10,7 @@ func ioctlBits() (int, int, int, int) {
 	switch runtime.GOARCH {
 	case "mips":
 		return 8, 8, 13, 3
-	case "amd64":
+	case "arm", "arm64", "amd64":
 		return 8, 8, 14, 2
 	}
 
@@ -23,7 +23,7 @@ func ioctlDirections() (uintptr, uintptr, uintptr) {
 	switch runtime.GOARCH {
 	case "mips":
 		return 1, 4, 2
-	case "amd64":
+	case "arm", "arm64", "amd64":
 		return 0, 1, 2
 	}
 
